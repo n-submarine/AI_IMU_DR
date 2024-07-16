@@ -50,8 +50,8 @@ def save_to_pickle(data, output_file):
 
 if __name__ == "__main__":
     bag_file = '/home/hsy/Bagfiles/underground_output.bag'  
-    topic = '/imu/data_raw'  
-    output_file = './underground_output.p' 
+    topic = '/gps/imu'  
+    output_file = './data_mobinha/underground_output.p' 
 
     data = read_imu_data(bag_file, topic)
     save_to_pickle(data, output_file)

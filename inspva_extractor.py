@@ -44,9 +44,9 @@ def extract_inspva_data(bag_file, topic):
 
     return lla_data, v_data, ang_data
 
-bag_file = '/home/hsy/Bagfiles/underground_output.bag'
+bag_file = '/home/hsy/Bagfiles/2024-07-16-21-15-31.bag'
 topic = '/novatel/oem7/inspva'
-pickle_file = '/home/hsy/ai-imu-dr/data_mobinha/underground_output.p'
+pickle_file = '/home/hsy/ai-imu-dr/data_mobinha/2024-07-16-21-15-31.p'
 
 p_gt_data, v_gt_data, ang_gt_data = extract_inspva_data(bag_file, topic)
 

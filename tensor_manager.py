@@ -1,3 +1,4 @@
+import os
 import pickle
 import torch
 
@@ -12,12 +13,19 @@ def reduce_to_match_length(data):
 
     return data
 
-def save_reduced_data(input_file, output_file):
-    with open(input_file, 'rb') as f:
+def save_reduced_data(file_path):
+    with open(file_path, 'rb') as f:
         data = pickle.load(f)
     reduced_data = reduce_to_match_length(data)
-    with open(output_file, 'wb') as f:
+    with open(file_path, 'wb') as f:
         pickle.dump(reduced_data, f)
 
-save_reduced_data('./songdo_230923.p', './data_mobinha/songdo_230923_revised.p')
-save_reduced_data('./underground_output.p', './data_mobinha/underground_output_revised.p')
+def revise_all_pickles(folder_path):
+    for file_name in os.listdir(folder_path):
+        if file_name.endswith('.p'):
+            file_path = os.path.join(folder_path, file_name)
+            save_reduced_data(file_path)
+
+folder_path = './data_mobinha' 
+
+revise_all_pickles(folder_path)
