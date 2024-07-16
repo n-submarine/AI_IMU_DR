@@ -9,12 +9,12 @@ from collections import OrderedDict
 
 
 class BaseDataset(Dataset):
-    pickle_extension = ".p"
+    pickle_extension = ".p"  # pickle format: 파이썬의 거의 모든 데이터타입을 파일에 저장하고 나중에 불러올 수 있음
     """extension of the file saved in pickle format"""
     file_normalize_factor = "normalize_factors.p"
     """name of file for normalizing input"""
 
-    def __init__(self, args):
+    def __init__(self, args):  # 데이터와 결과를 저장할 경로들과 테스트 및 검증 데이터셋 목록을 초기화
         # paths
         self.path_data_save = args.path_data_save
         """path where data are saved"""
@@ -34,7 +34,7 @@ class BaseDataset(Dataset):
         self.datasets_train = []
         """train datasets"""
 
-        self.datasets_validatation_filter = OrderedDict()
+        self.datasets_validatation_filter = OrderedDict()  # OrderDict()는 일반 딕셔너리와 유사하지만 항목 추가 순서를 기억하고 유지한다는 특징이 있음
         """Validation dataset with index for starting/ending"""
         self.datasets_train_filter = OrderedDict()
         """Validation dataset with index for starting/ending"""
@@ -135,7 +135,7 @@ class BaseDataset(Dataset):
         return u
 
 
-    @staticmethod
+    @staticmethod  # 데코레이터 -> 메소드가 클래스 내에서 독립적으로 작동하게 함
     def read_data(args):
         raise NotImplementedError
 
@@ -148,7 +148,7 @@ class BaseDataset(Dataset):
             pickle_dict = pickle.load(file_pi)
         return pickle_dict
 
-    @classmethod
+    @classmethod  # 클래스 변수에는 접근하지만 인스턴스 속성엔 접근하지 않게 함
     def dump(cls, mondict, *_file_name):
         file_name = os.path.join(*_file_name)
         if not file_name.endswith(cls.pickle_extension):
@@ -182,4 +182,15 @@ class BaseDataset(Dataset):
         measurements_covs = mondict['measurements_covs']
         return Rot, v, p , b_omega, b_acc, Rot_c_i, t_c_i, measurements_covs
 
-
+### Apply to ours ### 
+class CustomDataset(BaseDataset):
+    def __init__(self, args):
+        super(CustomDataset, self).__init__(args)
+        self.load_custom_data()
+    
+    def load_custom_data(self):
+        for dataset_name in os.listdir(self.path_data_save):
+            if dataset_name.endswith(self.pickle_extension):
+                dataset = self.load(self.path_data_save, dataset_name)
+                self.datasets.append(dataset_name[:-2])
+        self.divide_datasets()

@@ -39,7 +39,7 @@ def create_folder(directory):
 
 
 
-def umeyama_alignment(x, y, with_scale=False):
+def umeyama_alignment(x, y, with_scale=False):  # R,T,S 구하는 함수
     """
     Computes the least squares solution parameters of an Sim(m) matrix that minimizes the distance between a set of
     registered points.
@@ -57,8 +57,8 @@ def umeyama_alignment(x, y, with_scale=False):
     m, n = x.shape
 
     # means, eq. 34 and 35
-    mean_x = x.mean(axis=1)
-    mean_y = y.mean(axis=1)
+    mean_x = x.mean(axis=1)  # source points
+    mean_y = y.mean(axis=1)  # target points
 
     # variance, eq. 36
     # "transpose" for column subtraction

@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from termcolor import cprint
 from navpy import lla2ned
 from collections import OrderedDict
-from dataset import BaseDataset
+from dataset import BaseDataset, CustomDataset
 from utils_torch_filter import TORCHIEKF
 from utils_numpy_filter import NUMPYIEKF as IEKF
 from utils import prepare_data
@@ -430,8 +430,9 @@ def test_filter(args, dataset):
 
     for i in range(0, len(dataset.datasets)):
         dataset_name = dataset.dataset_name(i)
-        if dataset_name not in dataset.odometry_benchmark.keys():
-            continue
+        ### For our dataset
+        # if dataset_name not in dataset.odometry_benchmark.keys():
+        #     continue
         print("Test filter on sequence: " + dataset_name)
         t, ang_gt, p_gt, v_gt, u = prepare_data(args, dataset, dataset_name, i,
                                                        to_numpy=True)
@@ -477,8 +478,64 @@ class KITTIArgs():
         parameter_class = KITTIParameters
 
 
-if __name__ == '__main__':
-    args = KITTIArgs()
-    dataset = KITTIDataset(args)
-    launch(KITTIArgs)
+# if __name__ == '__main__':
+#     args = KITTIArgs()
+#     dataset = KITTIDataset(args)
+#     launch(KITTIArgs)
 
+### Apply to ours ### 
+class CustomParameters(IEKF.Parameters):
+    g = np.array([0, 0, -9.80665])
+
+    cov_omega = 2e-4
+    cov_acc = 1e-3
+    cov_b_omega = 1e-8
+    cov_b_acc = 1e-6
+    cov_Rot_c_i = 1e-8
+    cov_t_c_i = 1e-8
+    cov_Rot0 = 1e-6
+    cov_v0 = 1e-1
+    cov_b_omega0 = 1e-8
+    cov_b_acc0 = 1e-3
+    cov_Rot_c_i0 = 1e-5
+    cov_t_c_i0 = 1e-2
+    cov_lat = 1
+    cov_up = 10
+
+    def __init__(self, **kwargs):
+        super(CustomParameters, self).__init__(**kwargs)
+        self.set_param_attr()
+
+    def set_param_attr(self):
+        attr_list = [a for a in dir(CustomParameters) if not a.startswith('__') and not callable(getattr(CustomParameters, a))]
+        for attr in attr_list:
+            setattr(self, attr, getattr(CustomParameters, attr))
+
+class CustomArgs():
+    path_data_base = "path_to_your_data"  # 원본 데이터가 저장된 디렉토리(원본 데이터 파일 읽어와서 pickle 형식으로 변환하기 위해 사용)
+                                          # pickle 파일 쓸거면 read_data = 0으로 설정하고 신경 안써도 됨
+    path_data_save = "../data_mobinha"
+    path_results = "../results_mobinha"
+    path_temp = "../temp_mobinha"
+
+    epochs = 400
+    seq_dim = 6000
+
+    # training, cross-validation and test dataset
+    # 커스텀 데이터셋에서 임의로 선택한 시퀀스 넣으면 됨 e.g.'2011_09_30_drive_0028_extract'
+    cross_validation_sequences = ['underground_output_revised']
+    test_sequences = ['underground_output_revised']
+    continue_training = True
+
+    # choose what to do
+    read_data = 0
+    train_filter = 1
+    test_filter = 1
+    results_filter = 1
+    dataset_class = CustomDataset
+    parameter_class = CustomParameters
+
+if __name__ == '__main__':
+    args = CustomArgs()
+    dataset = CustomDataset(args)
+    launch(CustomArgs)
