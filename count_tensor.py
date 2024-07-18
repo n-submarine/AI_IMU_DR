@@ -2,7 +2,7 @@ import pickle
 import torch
 
 # Load the pickle file
-with open('./data_mobinha/underground_output_revised.p', 'rb') as f:
+with open('./data_mobinha/2024-07-16-21-47-10.p', 'rb') as f:
     data = pickle.load(f)
 
 # Print the length of each tensor

@@ -467,6 +467,8 @@ class KITTIArgs():
         # training, cross-validation and test dataset
         cross_validation_sequences = ['2011_09_30_drive_0028_extract']
         test_sequences = ['2011_09_30_drive_0028_extract']
+        # cross_validation_sequences = ['2024-07-16-21-47-10']
+        # test_sequences = ['2024-07-16-21-47-10']    
         continue_training = True
 
         # choose what to do
@@ -478,10 +480,10 @@ class KITTIArgs():
         parameter_class = KITTIParameters
 
 
-# if __name__ == '__main__':
-#     args = KITTIArgs()
-#     dataset = KITTIDataset(args)
-#     launch(KITTIArgs)
+if __name__ == '__main__':
+    args = KITTIArgs()
+    dataset = KITTIDataset(args)
+    launch(KITTIArgs)
 
 ### Apply to ours ### 
 class CustomParameters(IEKF.Parameters):
@@ -523,8 +525,8 @@ class CustomArgs():
 
     # training, cross-validation and test dataset
     # 커스텀 데이터셋에서 임의로 선택한 시퀀스 넣으면 됨 e.g.'2011_09_30_drive_0028_extract'
-    cross_validation_sequences = ['underground_output_revised']
-    test_sequences = ['underground_output_revised']
+    cross_validation_sequences = ['2024-07-16-21-47-10']
+    test_sequences = ['2024-07-16-21-47-10']
     continue_training = True
 
     # choose what to do
@@ -535,7 +537,7 @@ class CustomArgs():
     dataset_class = CustomDataset
     parameter_class = CustomParameters
 
-if __name__ == '__main__':
-    args = CustomArgs()
-    dataset = CustomDataset(args)
-    launch(CustomArgs)
+# if __name__ == '__main__':
+#     args = CustomArgs()
+#     dataset = CustomDataset(args)
+#     launch(CustomArgs)

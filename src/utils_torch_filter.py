@@ -41,26 +41,26 @@ class InitProcessCovNet(torch.nn.Module):
 class MesNet(torch.nn.Module):
         def __init__(self):
             super(MesNet, self).__init__()
-            self.beta_measurement = 3*torch.ones(2).double()
-            self.tanh = torch.nn.Tanh()
+            self.beta_measurement = 3*torch.ones(2).double()  # 학습된 공분산 조정
+            self.tanh = torch.nn.Tanh()  # 하이퍼볼릭 탄젠트 활성화 함수
 
-            self.cov_net = torch.nn.Sequential(torch.nn.Conv1d(6, 32, 5),
-                       torch.nn.ReplicationPad1d(4),
+            self.cov_net = torch.nn.Sequential(torch.nn.Conv1d(6, 32, 5),  # input_ch, output_ch, kernel_size
+                       torch.nn.ReplicationPad1d(4), 
                        torch.nn.ReLU(),
-                       torch.nn.Dropout(p=0.5),
+                       torch.nn.Dropout(p=0.0),
                        torch.nn.Conv1d(32, 32, 5, dilation=3),
                        torch.nn.ReplicationPad1d(4),
                        torch.nn.ReLU(),
-                       torch.nn.Dropout(p=0.5),
+                       torch.nn.Dropout(p=0.0),
                        ).double()
             "CNN for measurement covariance"
-            self.cov_lin = torch.nn.Sequential(torch.nn.Linear(32, 2),
+            self.cov_lin = torch.nn.Sequential(torch.nn.Linear(32, 2),  # 최종 공분산 출력을 위한 선형 레이어
                                               torch.nn.Tanh(),
                                               ).double()
-            self.cov_lin[0].bias.data[:] /= 100
+            self.cov_lin[0].bias.data[:] /= 100  # 첫 번째 레이어의 bias와 weight 100으로 나누어 초기화 
             self.cov_lin[0].weight.data[:] /= 100
 
-        def forward(self, u, iekf):
+        def forward(self, u, iekf):  # forward_propagation
             y_cov = self.cov_net(u).transpose(0, 2).squeeze()
             z_cov = self.cov_lin(y_cov)
             z_cov_net = self.beta_measurement.unsqueeze(0)*z_cov
